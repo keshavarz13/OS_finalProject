@@ -9,7 +9,7 @@
 #include "ticketlock.h"
 
 struct ticketlock lock;
-uint counter = 0;
+int counter = 0;
 
 struct {
   struct spinlock lock;
@@ -547,15 +547,30 @@ int ticketlockTest(void)
 {
   //get turn
   acquireTicketLock(&lock);
-  counter++;
-  for(int i = 0 ; i < 100000000; i++){
+  for(int i = 0 ; i < 1000; i++){
     //create delay
-    cprintf(" ");
+    cprintf("\rLoading...");
   }
-
-  cprintf("P%d in CS ", myproc()->pid);
-  cprintf("Counter ", counter);
+  cprintf("\n");
+  counter++;
+  cprintf("P%d in CS \n", myproc()->pid);
+  cprintf("Counter :%d\n", counter);
   
   // releaselock
   releaseTicketLock(&lock);
+  return counter;
+}
+
+
+void ticketlockSleep(void *chan)
+{
+  struct proc *p = myproc();
+  if (p == 0)
+    panic("sleep");
+  acquire(&ptable.lock);
+  p->chan = chan;
+  p->state = SLEEPING;
+  sched();
+  p->chan = 0;
+  release(&ptable.lock);
 }

@@ -17,9 +17,9 @@ void initTicketLock(struct ticketlock *lk, char *name)
 void acquireTicketLock(struct ticketlock *lk)
 {
     int my_turn = fetch_and_add(&lk->next, 1);
-    if (lk->turn != my_turn)
-        ticket_sleep(lk);
-        // Record info about lock acquisition for debugging.
+    while (lk->turn != my_turn)
+        ticketlockSleep(lk);
+    // Record info about lock acquisition for debugging.
     getcallerpcs(&lk, lk->pcs);
 }
 
