@@ -9,6 +9,7 @@
 #include "ticketlock.h"
 
 struct ticketlock lock;
+uint counter = 0;
 
 struct {
   struct spinlock lock;
@@ -536,18 +537,25 @@ procdump(void)
   }
 }
 
+
 void ticketlockInit(void)
 {
-  initTicketLock(&lock, "ticketttty");
+  initTicketLock(&lock, "tl");
 }
 
-void ticketlockTest(void)
+int ticketlockTest(void)
 {
+  //get turn
   acquireTicketLock(&lock);
+  counter++;
   for(int i = 0 ; i < 100000000; i++){
     //create delay
     cprintf(" ");
   }
+
   cprintf("P%d in CS ", myproc()->pid);
+  cprintf("Counter ", counter);
+  
+  // releaselock
   releaseTicketLock(&lock);
 }
