@@ -7,14 +7,24 @@
 #include "proc.h"
 #include "ticketlock.h"
 
-void initTicketLock(struct ticketlock *lock, char *name)
+void initTicketLock(struct ticketlock *lk, char *name)
 {
+    lk->name = name;
+    lk->next = 0;
+    lk->turn = 0;
 }
 
-void acquireTicketLock(struct ticketlock *lock)
+void acquireTicketLock(struct ticketlock *lk)
 {
+    int my_turn = fetch_and_add(&lk->next, 1);
+    if (lk->turn != my_turn)
+        ticket_sleep(lk);
+        // Record info about lock acquisition for debugging.
+    getcallerpcs(&lk, lk->pcs);
 }
 
-void releaseTicketLock(struct ticketlock *lock)
+void releaseTicketLock(struct ticketlock *lk)
 {
+    fetch_and_add(&lk->turn, 1);
+    wakeup(lk);
 }

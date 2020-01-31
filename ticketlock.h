@@ -1,8 +1,7 @@
 struct ticketlock
 {
-    int next_ticket;
-    int current_turn;
-    struct proc *proc;
+    int next;
+    int turn;
 
     // For debugging:
     char *name;        // Name of lock.

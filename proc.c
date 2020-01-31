@@ -6,6 +6,9 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "ticketlock.h"
+
+struct ticketlock lock;
 
 struct {
   struct spinlock lock;
@@ -531,4 +534,20 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+void ticketlockInit(void)
+{
+  initTicketLock(&lock, "ticketttty");
+}
+
+void ticketlockTest(void)
+{
+  acquireTicketLock(&lock);
+  for(int i = 0 ; i < 100000000; i++){
+    //create delay
+    cprintf(" ");
+  }
+  cprintf("P%d in CS ", myproc()->pid);
+  releaseTicketLock(&lock);
 }

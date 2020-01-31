@@ -9,6 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct ticketlock;
 
 //ticketlock.c
 void            initTicketLock(struct ticketlock*, char*);
