@@ -10,6 +10,11 @@ struct sleeplock;
 struct stat;
 struct superblock;
 
+//ticketlock.c
+void            initTicketLock(struct ticketlock*, char*);
+void            acquireTicketLock(struct ticketlock*);
+void            releaseTicketLock(struct ticketlock*);
+
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);
